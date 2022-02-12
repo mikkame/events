@@ -1,0 +1,33 @@
+name: Issue Reaction Counter
+# TODO replace to cron
+on: push
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v2
+        with:
+          script: |
+            (async () => {
+              const repo = await github.request('GET /repos/{owner}/{repo}/issues', {
+                owner: 'engineer-life',
+                repo: 'events',
+                per_page:100,
+                state:"open"
+              })
+              for (const issue of repo.data) {
+                // @ts-ignore +1 -1 がtypeとして設定されていないが、実際は存在する。
+                const count = issue.reactions['+1'] ?? 0
+                if (count >= 1 && !issue.labels.find((label) => {return typeof label != 'string' && label.name == 'ready'})) {
+                  await github.request('POST /repos/{owner}/{repo}/issues/{issue_number}/labels', {
+                    owner:'engineer-life',
+                    repo:'events',
+                    issue_number: issue.number,
+                    labels: ['ready']
+                  })
+                }
+              }
+            })()
+
+
+
