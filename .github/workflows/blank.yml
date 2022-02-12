@@ -5,25 +5,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Return context
-        uses: actions/github-script@v2
-        id: return_context
-        with:
-          script: |
-            return context
-
-      - name: Show steps.return_context
-        env:
-          RETURN_CONTEXT: ${{ toJson(steps.return_context.outputs) }}
-        run: echo "$RETURN_CONTEXT"
-        
       - uses: actions/github-script@v2
         with:
           script: |
             (async () => {
               const repo = await github.request('GET /repos/{owner}/{repo}/issues', {
-                owner: 'engineer-life',
-                repo: 'events',
+                owner: context.repo.owner,
+                repo: context.repo.repo,
                 per_page:100,
                 state:"open"
               })
@@ -31,8 +19,8 @@ jobs:
                 const count = issue.reactions['+1'] ? issue.reactions['+1'] : 0
                 if (count >= 1 && !issue.labels.find((label) => {return typeof label != 'string' && label.name == 'ready'})) {
                   await github.request('POST /repos/{owner}/{repo}/issues/{issue_number}/labels', {
-                    owner:'engineer-life',
-                    repo:'events',
+                    owner:context.repo.owner,
+                    repo:context.repo.repo,
                     issue_number: issue.number,
                     labels: ['ready']
                   })
