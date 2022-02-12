@@ -24,6 +24,12 @@ jobs:
                     issue_number: issue.number,
                     labels: ['ready']
                   })
+                  await github.request('POST /repos/{owner}/{repo}/issues/{issue_number}/comments', {
+                    owner:context.repo.owner,
+                    repo:context.repo.repo,
+                    issue_number: issue.number,
+                    body: ":tada: :tada: :tada: Congratulation! We got some many participants! :rocket: :rocket: :rocket:"
+                  })
                 }
               }
             })()
