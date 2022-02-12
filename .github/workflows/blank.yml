@@ -2,7 +2,7 @@ name: Issue Reaction Counter
 # TODO replace to cron
 on:
   schedule:
-    - cron: '5/* * * * *'
+    - cron: '*/5 * * * *'
 jobs:
   build:
     runs-on: ubuntu-latest
