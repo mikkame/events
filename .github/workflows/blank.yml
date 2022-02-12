@@ -5,6 +5,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Return context
+        uses: actions/github-script@v2
+        id: return_context
+        with:
+          script: |
+            return context
+
+      - name: Show steps.return_context
+        env:
+          RETURN_CONTEXT: ${{ toJson(steps.return_context.outputs) }}
+        run: echo "$RETURN_CONTEXT"
+        
       - uses: actions/github-script@v2
         with:
           script: |
